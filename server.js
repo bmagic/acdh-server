@@ -10,24 +10,25 @@ var async = require('async');
 var mongo = require('mongodb').MongoClient;
 var winston = require("winston");
 var applicationStorage = require("core/application-storage");
-var HttpServer = require("core/http-server");
+var httpServer = require("core/http-server");
+
+var app = null;
 
 
 //Load config file
-var env = process.env.NODE_ENV || "development";
-applicationStorage.config = require("config/config.json");
+var env = process.env.NODE_ENV || "dev";
+applicationStorage.config = require("config/config." + env + ".js");
 
 async.waterfall([
     //Initialize the logger
     function (callback) {
-        //noinspection JSUnresolvedVariable
         var transports = [
             new (require("winston-daily-rotate-file"))({
                 filename: applicationStorage.config.logger.folder + "/" + env + ".log",
                 json: false,
                 handleExceptions: true
             })];
-        if (env == "development") {
+        if (env == "dev") {
             transports.push(new (winston.transports.Console)({handleExceptions: true}));
         }
 
@@ -49,9 +50,12 @@ async.waterfall([
     },
     //Start the HTTP server
     function (callback) {
-        new HttpServer().start(applicationStorage.config.port, function () {
+        httpServer.start(applicationStorage.config.port, function () {
             applicationStorage.logger.info("Server HTTP listening on port %s", applicationStorage.config.port);
             callback();
         });
     }
 ]);
+
+module.exports.httpServer = httpServer.app;
+module.exports.config = applicationStorage.config;

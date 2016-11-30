@@ -2,7 +2,7 @@ var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
 var userModel = require("users/user-model");
 var logger = require("core/application-storage").logger;
-var validateHash = require("helpers/password").validateHash;
+var validateHash = require("core/utilities/password").validateHash;
 
 passport.use(new LocalStrategy(
     function (username, password, done) {

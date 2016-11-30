@@ -26,16 +26,16 @@ module.exports.register = function (req, res) {
                 }
             ], function (error) {
                 if (error && error === true) {
-                    res.status(409).json({message: constants.USER_ALREADY_EXIST});
+                    res.status(409).send(constants.USER_ALREADY_EXIST);
                 } else if (error) {
-                    res.status(500).json({message: constants.INTERNAL_SERVER_ERROR});
+                    res.status(500).send(constants.INTERNAL_SERVER_ERROR);
                 } else {
-                    res.status(201).json({message: constants.USER_CREATED})
+                    res.status(201).send(constants.USER_CREATED)
                 }
             }
         );
     } else {
-        res.status(400).json({message: constants.MISSING_PARAMETER});
+        res.status(400).send(constants.MISSING_PARAMETER);
     }
 };
 
@@ -45,7 +45,16 @@ module.exports.register = function (req, res) {
  * @param res
  */
 module.exports.login = function (req, res) {
-    res.status(200).json({message: constants.USER_CONNECTED});
+
+
+    userModel.updateLastLogin(req.user.username, function (error) {
+        if (error) {
+            res.status(500).send(constants.INTERNAL_SERVER_ERROR);
+        } else {
+            res.status(200).send(constants.USER_CONNECTED);
+        }
+    });
+
 
 };
 

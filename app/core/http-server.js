@@ -10,24 +10,26 @@ var mongoStore = require("connect-mongo")(session);
 var passport = require("passport");
 var compression = require('compression');
 var applicationStorage = require('core/application-storage');
+var constants = require('core/constants');
 
+var app = express();
 
 /**
  * HttpServer
  * @class HttpServer
  * @constructor
  */
-function HttpServer() {
+module.exports.start = function (port, callback) {
     var config = applicationStorage.config;
     var logger = applicationStorage.logger;
 
-    this.app = express();
-    this.server = http.createServer(this.app);
+    var server = http.createServer(app);
+
 
     //Create sessionStore inside Mongodb
     var sessionStore = new mongoStore({db: applicationStorage.mongo});
 
-    this.app.use(compression({threshold: 0}));
+    app.use(compression({threshold: 0}));
 
     //Update Session store with opened database connection
     //Allowed server to restart without loosing any session
@@ -41,51 +43,36 @@ function HttpServer() {
         resave: true
     }));
 
-    this.app.use(cookieParser());
+    app.use(cookieParser());
 
-    this.app.use(bodyParser.urlencoded({extended: true}));
-    this.app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
+    app.use(bodyParser.json());
     //noinspection JSUnresolvedFunction
-    this.app.use(passport.initialize());
+    app.use(passport.initialize());
     //noinspection JSUnresolvedFunction
-    this.app.use(passport.session());
+    app.use(passport.session());
 
 
     //Log all other request and send 404
-    this.app.use(function (req, res, next) {
+    app.use(function (req, res, next) {
         //noinspection JSUnresolvedVariable
         logger.info("ip:%s method:%s path:%s params:%s body:%s query:%s ", req.headers['x-forwarded-for'] || req.connection.remoteAddress, req.method, req.path, JSON.stringify(req.params), JSON.stringify(req.body), JSON.stringify(req.query));
         next();
     });
 
     //Initialize api v1 routes
-    this.app.use('/api/v1/users', require("users/routes.js"));
-
-    //Catch all error and log them
-    this.app.use(function (error, req, res) {
-        logger.error("Error on request", error);
-        res.status(error.statusCode).json({error: error.statusCode, message: "Internal Server Error"});
-    });
+    app.use('/api/v1/users', require("users/routes.js"));
 
     //Log all other request and send 404
-    this.app.use(function (req, res) {
+    app.use(function (req, res) {
         logger.error("Error 404 on request %s", req.url);
-        res.status(404).send();
+        res.status(404).send(constants.PAGE_NOT_FOUND);
     });
 
-}
-
-/**
- * Starts the HTTP server.
- * @method start
- */
-HttpServer.prototype.start = function (port, callback) {
-    // Start server
-    this.server.listen(port, function () {
+    server.listen(port, function () {
         callback();
     });
 };
 
-
-module.exports = HttpServer;
+module.exports.app = app;
 
