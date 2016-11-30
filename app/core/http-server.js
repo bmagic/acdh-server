@@ -31,6 +31,7 @@ function HttpServer() {
 
     //Update Session store with opened database connection
     //Allowed server to restart without loosing any session
+    //noinspection JSUnresolvedVariable
     this.app.use(session({
         key: 'acdh.sid',
         cookie: {maxAge: 3600000 * 24 * 14},
@@ -52,6 +53,7 @@ function HttpServer() {
 
     //Log all other request and send 404
     this.app.use(function (req, res, next) {
+        //noinspection JSUnresolvedVariable
         logger.info("ip:%s method:%s path:%s params:%s body:%s query:%s ", req.headers['x-forwarded-for'] || req.connection.remoteAddress, req.method, req.path, JSON.stringify(req.params), JSON.stringify(req.body), JSON.stringify(req.query));
         next();
     });
@@ -60,7 +62,7 @@ function HttpServer() {
     this.app.use('/api/v1/users', require("users/routes.js"));
 
     //Catch all error and log them
-    this.app.use(function (error, req, res, next) {
+    this.app.use(function (error, req, res) {
         logger.error("Error on request", error);
         res.status(error.statusCode).json({error: error.statusCode, message: "Internal Server Error"});
     });
