@@ -1,0 +1,26 @@
+{
+  "name": "acdh-server",
+  "description": "Server part for acdh.info",
+  "private": true,
+  "main": "server/app.js",
+  "dependencies": {
+    "app-module-path": "^2.1.0",
+    "async": "latest",
+    "body-parser": "latest",
+    "compression": "latest",
+    "connect-mongo": "latest",
+    "cookie-parser": "latest",
+    "express": "latest",
+    "express-session": "latest",
+    "mongodb": "latest",
+    "passport": "latest",
+    "passport-local": "^1.0.0",
+    "winston": "latest",
+    "winston-daily-rotate-file": "latest"
+  },
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "author": "Baptiste Routhieau <baptiste.routhieau@gmail.com>",
+  "license": "AGPL-3.0"
+}
