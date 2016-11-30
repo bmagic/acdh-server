@@ -15,11 +15,12 @@
     "mongodb": "^2.2.12",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
+    "randomstring": "^1.1.5",
     "winston": "^2.3.0",
     "winston-daily-rotate-file": "^1.4.0"
   },
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server.js"
   },
   "author": "Baptiste Routhieau <baptiste.routhieau@gmail.com>",
   "license": "AGPL-3.0"

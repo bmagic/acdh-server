@@ -2,20 +2,19 @@ var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
 var userModel = require("users/user-model");
 var logger = require("core/application-storage").logger;
-var passwordUtils = require("core/passwordUtils");
+var validateHash = require("helpers/password").validateHash;
 
 passport.use(new LocalStrategy(
     function (username, password, done) {
         userModel.findOne(username, function (error, user) {
-
             if (error) {
                 return done(err);
             }
             if (!user) {
-                return done(null, false,{message:"test"});
+                return done(null, false);
             }
-            if (!passwordUtils.validateHash(user.password,password)) {
-                return done(null, false,{message:"test"});
+            if (!validateHash(user.password, user.salt, password)) {
+                return done(null, false);
             }
             return done(null, user);
         });
@@ -35,6 +34,7 @@ passport.deserializeUser(function (username, done) {
     userModel.findOne(username, function (error, user) {
         if (user) {
             delete user.password;
+            delete user.salt;
             done(null, user);
         } else {
             done(null, false);

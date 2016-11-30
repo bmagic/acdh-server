@@ -2,7 +2,7 @@
 
 //Defines dependencies
 var applicationStorage = require("core/application-storage");
-var passwordUtils = require("core/passwordUtils");
+var getHashAndSalt = require("helpers/password").getHashAndSalt;
 
 
 /**
@@ -13,8 +13,8 @@ var passwordUtils = require("core/passwordUtils");
  */
 module.exports.insert = function (username, password, callback) {
     var collection = applicationStorage.mongo.collection("users");
-    var hash = passwordUtils.getHash(password);
-    collection.insertOne({username: username, password: hash}, function (error) {
+    var hashAndSalt = getHashAndSalt(password);
+    collection.insertOne({username: username, password: hashAndSalt.hash, salt:hashAndSalt.salt}, function (error) {
         callback(error);
     });
 };
