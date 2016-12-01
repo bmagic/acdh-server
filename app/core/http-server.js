@@ -62,6 +62,7 @@ module.exports.start = function (port, callback) {
 
     //Initialize api v1 routes
     app.use('/api/v1/users', require("users/routes.js"));
+    app.use('/api/v1/programs', require("programs/routes.js"));
 
     //Log all other request and send 404
     app.use(function (req, res) {
