@@ -2,12 +2,15 @@
 var async = require("async");
 var constants = require("core/constants");
 var userModel = require("users/user-model");
+var applicationStorage = require("core/application-storage");
+
 /**
  * Register route
  * @param req
  * @param res
  */
 module.exports.register = function (req, res) {
+    var logger = applicationStorage.logger;
     if (req.body.username && req.body.password) {
         async.series([
                 function (callback) {
@@ -28,6 +31,7 @@ module.exports.register = function (req, res) {
                 if (error && error === true) {
                     res.status(409).send(constants.USER_ALREADY_EXIST);
                 } else if (error) {
+                    logger.error(error);
                     res.status(500).send(constants.INTERNAL_SERVER_ERROR);
                 } else {
                     res.status(201).send(constants.USER_CREATED)
@@ -46,9 +50,10 @@ module.exports.register = function (req, res) {
  */
 module.exports.login = function (req, res) {
 
-
+    var logger = applicationStorage.logger;
     userModel.updateLastLogin(req.user.username, function (error) {
         if (error) {
+            logger.error(error);
             res.status(500).send(constants.INTERNAL_SERVER_ERROR);
         } else {
             res.status(200).send(constants.USER_CONNECTED);
