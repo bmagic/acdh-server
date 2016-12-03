@@ -39,12 +39,23 @@ module.exports.update = function (id, program, callback) {
  * @param limit
  * @param callback
  */
-module.exports.find = function (criteria, limit, callback) {
+module.exports.find = function (criteria, limit, skip, callback) {
     var collection = applicationStorage.mongo.collection(databaseName);
-    collection.find(criteria, {score: {$meta: "textScore"}}).sort({score: {$meta: "textScore"}}).limit(limit).toArray(function (error, programs) {
+    collection.find(criteria, {score: {$meta: "textScore"}}).sort({score: {$meta: "textScore"}}).limit(limit).skip(skip).toArray(function (error, programs) {
         callback(error, programs);
     });
 };
 
 
+/**
+ * Count programs
+ * @param criteria
+ * @param callback
+ */
+module.exports.count = function (criteria, callback) {
+    var collection = applicationStorage.mongo.collection(databaseName);
+    collection.count(criteria, function (error, count) {
+        callback(error, count);
+    });
+};
 

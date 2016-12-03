@@ -53,12 +53,17 @@ module.exports.start = function (port, callback) {
     app.use(passport.session());
 
     this.app.use(function (req, res, next) {
-        res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE, CONNECT');
-        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-        res.setHeader('Access-Control-Allow-Credentials', true);
+        if (req.headers.origin) {
+            res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE, CONNECT');
+            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+            res.setHeader('Access-Control-Expose-Headers', "X-count");
+            res.setHeader('Access-Control-Allow-Credentials', true);
+        }
         next();
+
     });
+
 
     //Log all other request and send 404
     app.use(function (req, res, next) {

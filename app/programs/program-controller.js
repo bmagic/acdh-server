@@ -8,20 +8,42 @@ var applicationStorage = require("core/application-storage");
 
 module.exports.getPrograms = function (req, res) {
     var logger = applicationStorage.logger;
+    var itemNumber = 15;
     var criteria = {};
     if (req.query.search) {
         //criteria = {$or:[{tags:{$regex: req.query.search, $options: "i"}}]}
         //criteria = {$or:[{$text:{$search: req.query.search}},{tags:{$regex: req.query.search, $options: "i"}}]}
         criteria = {$text: {$search: req.query.search}};
-
     }
 
-    programModel.find(criteria, 20, function (error, programs) {
+    var skip = 0;
+    if (req.query.page) {
+        var page = parseInt(req.query.page, 10);
+        if (page != NaN) {
+            if (page > 0) {
+                skip = page * itemNumber;
+            }
+        }
+    }
+
+    async.parallel({
+        programs: function (callback) {
+            programModel.find(criteria, itemNumber, skip, function (error, programs) {
+                callback(error, programs);
+            });
+        },
+        count: function (callback) {
+            programModel.count(criteria, function (error, count) {
+                callback(error, count);
+            });
+        }
+    }, function (error, results) {
         if (error) {
             logger.error(error);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR));
         } else {
-            res.status(HttpStatus.OK).json(programs);
+            res.header("X-count", results.count);
+            res.status(HttpStatus.OK).json(results.programs);
         }
     });
 };
