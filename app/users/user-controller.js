@@ -1,6 +1,6 @@
 "use strict";
 var async = require("async");
-var constants = require("core/constants");
+var HttpStatus = require('http-status-codes');
 var userModel = require("users/user-model");
 var applicationStorage = require("core/application-storage");
 
@@ -29,17 +29,17 @@ module.exports.register = function (req, res) {
                 }
             ], function (error) {
                 if (error && error === true) {
-                    res.status(409).send(constants.USER_ALREADY_EXIST);
+                    res.status(HttpStatus.CONFLICT).send(HttpStatus.getStatusText(HttpStatus.CONFLICT));
                 } else if (error) {
                     logger.error(error);
-                    res.status(500).send(constants.INTERNAL_SERVER_ERROR);
+                    res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR));
                 } else {
-                    res.status(201).send(constants.USER_CREATED)
+                    res.status(HttpStatus.CREATED).send(HttpStatus.getStatusText(HttpStatus.CREATED));
                 }
             }
         );
     } else {
-        res.status(400).send(constants.MISSING_PARAMETER);
+        res.status(HttpStatus.BAD_REQUEST).send(HttpStatus.getStatusText(HttpStatus.BAD_REQUEST));
     }
 };
 
@@ -49,18 +49,15 @@ module.exports.register = function (req, res) {
  * @param res
  */
 module.exports.login = function (req, res) {
-
     var logger = applicationStorage.logger;
     userModel.updateLastLogin(req.user.username, function (error) {
         if (error) {
             logger.error(error);
-            res.status(500).send(constants.INTERNAL_SERVER_ERROR);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR));
         } else {
-            res.status(200).send(constants.USER_CONNECTED);
+            res.status(HttpStatus.OK).send(HttpStatus.getStatusText(HttpStatus.OK));
         }
     });
-
-
 };
 
 /**
@@ -69,7 +66,7 @@ module.exports.login = function (req, res) {
  * @param res
  */
 module.exports.profile = function (req, res) {
-    res.json(req.user);
+    res.status(HttpStatus.OK).json(req.user);
 };
 
 /**
@@ -79,5 +76,5 @@ module.exports.profile = function (req, res) {
  */
 module.exports.logout = function (req, res) {
     req.logout();
-    res.status(204).send();
+    res.status(HttpStatus.NO_CONTENT).send();
 };

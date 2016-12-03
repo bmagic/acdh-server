@@ -40,7 +40,7 @@ module.exports.findOne = function (username, callback) {
  */
 module.exports.updateLastLogin = function (username, callback) {
     var collection = applicationStorage.mongo.collection(databaseName);
-    collection.updateOne({username: username}, {$set: {last_login: new Date()}}, function (error) {
+    collection.updateOne({username: username}, {$set: {last_login: new Date().getTime()}}, function (error) {
         callback(error);
     });
 };

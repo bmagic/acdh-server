@@ -1,8 +1,6 @@
 "use strict";
 var Ajv = require('ajv');
 var ajv = new Ajv({removeAdditional: true});
-var applicationStorage = require("core/application-storage");
-var HttpError = require("core/utilities/HttpError");
 
 var schema = {
     type: "object",
@@ -61,16 +59,6 @@ var schema = {
 };
 
 module.exports.validate = function (data, callback) {
-    var logger = applicationStorage.logger;
-
     ajv.validate(schema, data);
-
-    if (ajv.errors) {
-        logger.error(ajv.errors)
-        callback(new HttpError(ajv.errorsText(), 400), data)
-    } else {
-        callback(null, data);
-    }
-
-
+    callback(ajv.errors, data);
 };

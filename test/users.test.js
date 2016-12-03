@@ -5,6 +5,7 @@ var httpServer = server.httpServer;
 var config = server.config;
 var mongo = require('mongodb').MongoClient;
 var should = require("should");
+var HttpStatus = require('http-status-codes');
 
 
 describe('Users tests', function () {
@@ -21,8 +22,8 @@ describe('Users tests', function () {
                 .type("form")
                 .send({'username': 'user1', 'password': 'password1'})
                 .end(function (err, res) {
-                    should(res.status).equal(201);
-                    should(res.text).equal("USER_CREATED");
+                    should(res.status).equal(HttpStatus.CREATED);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.CREATED));
                     done();
                 });
         });
@@ -31,8 +32,8 @@ describe('Users tests', function () {
                 .type("form")
                 .send({'username': 'user1', 'password': 'password1'})
                 .end(function (err, res) {
-                    should(res.status).equal(409);
-                    should(res.text).equal("USER_ALREADY_EXIST");
+                    should(res.status).equal(HttpStatus.CONFLICT);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.CONFLICT));
                     done();
                 });
         });
@@ -41,8 +42,8 @@ describe('Users tests', function () {
                 .type("form")
                 .send({'password': 'password1'})
                 .end(function (err, res) {
-                    should(res.status).equal(400);
-                    should(res.text).equal("MISSING_PARAMETER");
+                    should(res.status).equal(HttpStatus.BAD_REQUEST);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.BAD_REQUEST));
                     done();
                 });
         });
@@ -51,8 +52,8 @@ describe('Users tests', function () {
                 .type("form")
                 .send({'username': 'user1'})
                 .end(function (err, res) {
-                    should(res.status).equal(400);
-                    should(res.text).equal("MISSING_PARAMETER");
+                    should(res.status).equal(HttpStatus.BAD_REQUEST);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.BAD_REQUEST));
                     done();
                 });
         });
@@ -63,8 +64,8 @@ describe('Users tests', function () {
                 .type("form")
                 .send({'username': 'user1', 'password': 'fakepassword'})
                 .end(function (err, res) {
-                    should(res.status).equal(401);
-                    should(res.text).equal("Unauthorized");
+                    should(res.status).equal(HttpStatus.UNAUTHORIZED);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED));
                     done();
                 });
         });
@@ -73,8 +74,8 @@ describe('Users tests', function () {
                 .type("form")
                 .send({'username': 'user2', 'password': 'fakepassword'})
                 .end(function (err, res) {
-                    should(res.status).equal(401);
-                    should(res.text).equal("Unauthorized");
+                    should(res.status).equal(HttpStatus.UNAUTHORIZED);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.UNAUTHORIZED));
                     done();
                 });
         });
@@ -83,8 +84,8 @@ describe('Users tests', function () {
         it('should get an access denied error on profile', function (done) {
             request(httpServer).get('/api/v1/users/profile')
                 .end(function (err, res) {
-                    should(res.status).equal(403);
-                    should(res.text).equal("ACCESS_DENIED");
+                    should(res.status).equal(HttpStatus.FORBIDDEN);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.FORBIDDEN));
                     done();
                 });
         });
@@ -93,7 +94,7 @@ describe('Users tests', function () {
         it('should get an access denied message on profile', function (done) {
             request(httpServer).get('/api/v1/users/logout')
                 .end(function (err, res) {
-                    should(res.status).equal(204);
+                    should(res.status).equal(HttpStatus.NO_CONTENT);
                     done();
                 });
         });
@@ -105,8 +106,8 @@ describe('Users tests', function () {
                 .type("form")
                 .send({'username': 'user2', 'password': 'password2'})
                 .end(function (err, res) {
-                    should(res.status).equal(201);
-                    should(res.text).equal("USER_CREATED");
+                    should(res.status).equal(HttpStatus.CREATED);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.CREATED));
                     done();
                 });
         });
@@ -116,8 +117,8 @@ describe('Users tests', function () {
                 .send({'username': 'user2', 'password': 'password2'})
                 .end(function (err, res) {
                     should(res.headers["set-cookie"]).is.not.undefined();
-                    should(res.status).equal(200);
-                    should(res.text).equal("USER_CONNECTED");
+                    should(res.status).equal(HttpStatus.OK);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.OK));
                     done();
                 });
         });
@@ -125,7 +126,7 @@ describe('Users tests', function () {
             agent.get('/api/v1/users/profile')
                 .type("form")
                 .end(function (err, res) {
-                    should(res.status).equal(200);
+                    should(res.status).equal(HttpStatus.OK);
                     should(res.text).is.not.undefined();
                     done();
                 });
@@ -134,15 +135,15 @@ describe('Users tests', function () {
             agent.get('/api/v1/users/logout')
                 .type("form")
                 .end(function (err, res) {
-                    should(res.status).equal(204);
+                    should(res.status).equal(HttpStatus.NO_CONTENT);
                     done();
                 });
         });
         it('should get an access denied error on profile', function (done) {
             agent.get('/api/v1/users/profile')
                 .end(function (err, res) {
-                    should(res.status).equal(403);
-                    should(res.text).equal("ACCESS_DENIED");
+                    should(res.status).equal(HttpStatus.FORBIDDEN);
+                    should(res.text).equal(HttpStatus.getStatusText(HttpStatus.FORBIDDEN));
                     done();
                 });
         });

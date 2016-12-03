@@ -10,7 +10,7 @@ var mongoStore = require("connect-mongo")(session);
 var passport = require("passport");
 var compression = require('compression');
 var applicationStorage = require('core/application-storage');
-var constants = require('core/constants');
+var HttpStatus = require('http-status-codes');
 
 var app = express();
 
@@ -52,6 +52,13 @@ module.exports.start = function (port, callback) {
     //noinspection JSUnresolvedFunction
     app.use(passport.session());
 
+    this.app.use(function (req, res, next) {
+        res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE, CONNECT');
+        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+        res.setHeader('Access-Control-Allow-Credentials', true);
+        next();
+    });
 
     //Log all other request and send 404
     app.use(function (req, res, next) {
@@ -67,7 +74,7 @@ module.exports.start = function (port, callback) {
     //Log all other request and send 404
     app.use(function (req, res) {
         logger.error("Error 404 on request %s", req.url);
-        res.status(404).send(constants.PAGE_NOT_FOUND);
+        res.status(HttpStatus.NOT_FOUND).send(HttpStatus.getStatusText(HttpStatus.NOT_FOUND));
     });
 
     server.listen(port, function () {
