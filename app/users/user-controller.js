@@ -55,7 +55,7 @@ module.exports.login = function (req, res) {
             logger.error(error);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR));
         } else {
-            res.status(HttpStatus.OK).send(HttpStatus.getStatusText(HttpStatus.OK));
+            res.status(HttpStatus.OK).json(req.user);
         }
     });
 };
@@ -66,7 +66,12 @@ module.exports.login = function (req, res) {
  * @param res
  */
 module.exports.profile = function (req, res) {
-    res.status(HttpStatus.OK).json(req.user);
+
+    var response = {};
+    if (req.user) {
+        response = req.user
+    }
+    res.status(HttpStatus.OK).json(response);
 };
 
 /**

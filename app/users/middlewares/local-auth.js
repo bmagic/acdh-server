@@ -16,6 +16,8 @@ passport.use(new LocalStrategy(
             if (!validateHash(user.password, user.salt, password)) {
                 return done(null, false);
             }
+            delete user.password;
+            delete user.salt;
             return done(null, user);
         });
     }
