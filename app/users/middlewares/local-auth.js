@@ -5,8 +5,12 @@ var logger = require("core/application-storage").logger;
 var validateHash = require("core/utilities/password").validateHash;
 
 passport.use(new LocalStrategy(
-    function (username, password, done) {
-        userModel.findOne(username, function (error, user) {
+    {
+        usernameField: 'email',
+        passwordField: 'password'
+    },
+    function (email, password, done) {
+        userModel.findOne(email, function (error, user) {
             if (error) {
                 return done(err);
             }
@@ -25,15 +29,15 @@ passport.use(new LocalStrategy(
 
 //noinspection JSUnresolvedFunction
 passport.serializeUser(function (user, done) {
-    logger.silly("serializeUser %s", user.username);
-    done(null, user.username);
+    logger.silly("serializeUser %s", user.email);
+    done(null, user.email);
 });
 
 
 //noinspection JSUnresolvedFunction
-passport.deserializeUser(function (username, done) {
-    logger.silly("deserializeUser for username:%s", username);
-    userModel.findOne(username, function (error, user) {
+passport.deserializeUser(function (email, done) {
+    logger.silly("deserializeUser for email:%s", email);
+    userModel.findOne(email, function (error, user) {
         if (user) {
             delete user.password;
             delete user.salt;

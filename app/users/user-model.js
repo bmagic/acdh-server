@@ -9,38 +9,38 @@ const databaseName = "users";
 
 /**
  * Create a new user object
- * @param username
+ * @param email
  * @param password
  * @param callback
  */
-module.exports.insert = function (username, password, callback) {
+module.exports.insert = function (email, password, callback) {
     var collection = applicationStorage.mongo.collection(databaseName);
     var hashAndSalt = getHashAndSalt(password);
-    collection.insertOne({username: username, password: hashAndSalt.hash, salt: hashAndSalt.salt}, function (error) {
+    collection.insertOne({email: email, password: hashAndSalt.hash, salt: hashAndSalt.salt}, function (error) {
         callback(error);
     });
 };
 
 /**
  * Find an user
- * @param username
+ * @param email
  * @param callback
  */
-module.exports.findOne = function (username, callback) {
+module.exports.findOne = function (email, callback) {
     var collection = applicationStorage.mongo.collection(databaseName);
-    collection.findOne({username: username}, {_id: 0}, function (error, user) {
+    collection.findOne({email: email}, {_id: 0}, function (error, user) {
         callback(error, user);
     });
 };
 
 /**
  * Update last login date
- * @param username
+ * @param email
  * @param callback
  */
-module.exports.updateLastLogin = function (username, callback) {
+module.exports.updateLastLogin = function (email, callback) {
     var collection = applicationStorage.mongo.collection(databaseName);
-    collection.updateOne({username: username}, {$set: {last_login: new Date().getTime()}}, function (error) {
+    collection.updateOne({email: email}, {$set: {last_login: new Date().getTime()}}, function (error) {
         callback(error);
     });
 };

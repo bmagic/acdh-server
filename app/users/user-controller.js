@@ -3,6 +3,7 @@ var async = require("async");
 var HttpStatus = require('http-status-codes');
 var userModel = require("users/user-model");
 var applicationStorage = require("core/application-storage");
+var validateEmail = require("core/utilities/email").validateEmail;
 
 /**
  * Register route
@@ -11,10 +12,10 @@ var applicationStorage = require("core/application-storage");
  */
 module.exports.register = function (req, res) {
     var logger = applicationStorage.logger;
-    if (req.body.username && req.body.password) {
+    if (req.body.email && req.body.password && validateEmail(req.body.email)) {
         async.series([
                 function (callback) {
-                    userModel.findOne(req.body.username, function (error, user) {
+                    userModel.findOne(req.body.email, function (error, user) {
                         if (user) {
                             callback(true);
                         } else {
@@ -23,7 +24,7 @@ module.exports.register = function (req, res) {
                     });
                 },
                 function (callback) {
-                    userModel.insert(req.body.username, req.body.password, function (error) {
+                    userModel.insert(req.body.email, req.body.password, function (error) {
                         callback(error);
                     });
                 }
@@ -50,7 +51,7 @@ module.exports.register = function (req, res) {
  */
 module.exports.login = function (req, res) {
     var logger = applicationStorage.logger;
-    userModel.updateLastLogin(req.user.username, function (error) {
+    userModel.updateLastLogin(req.user.email, function (error) {
         if (error) {
             logger.error(error);
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -62,7 +63,7 @@ module.exports.login = function (req, res) {
 
 /**
  * Profile route
- * @param req.logger
+ * @param req
  * @param res
  */
 module.exports.profile = function (req, res) {

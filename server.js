@@ -17,6 +17,7 @@ var app = null;
 
 //Load config file
 var env = process.env.NODE_ENV || "dev";
+applicationStorage
 applicationStorage.config = require("config/config." + env + ".js");
 
 async.waterfall([
