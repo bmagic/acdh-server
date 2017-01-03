@@ -10,6 +10,7 @@ var auth = require("users/middlewares/auth");
 router.get("/", programController.getPrograms);
 router.put("/", auth.isAdmin, programController.createProgram);
 router.put("/:id", auth.isAdmin, programController.updateProgram);
+router.delete("/:id", auth.isAdmin, programController.deleteProgram);
 
 module.exports = router;
 

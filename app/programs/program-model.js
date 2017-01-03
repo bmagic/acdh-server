@@ -3,6 +3,8 @@
 //Defines dependencies
 var async = require("async");
 var applicationStorage = require("core/application-storage");
+var ObjectID = require('mongodb').ObjectID;
+
 
 const databaseName = "programs";
 
@@ -37,6 +39,7 @@ module.exports.update = function (id, program, callback) {
  * Find programs
  * @param criteria
  * @param limit
+ * @param skip
  * @param callback
  */
 module.exports.find = function (criteria, limit, skip, callback) {
@@ -59,3 +62,15 @@ module.exports.count = function (criteria, callback) {
     });
 };
 
+
+/**
+ * Delete program
+ * @param id
+ * @param callback
+ */
+module.exports.delete = function (id, callback) {
+    var collection = applicationStorage.mongo.collection(databaseName);
+    collection.deleteOne({_id: ObjectID(id)}, function (error) {
+        callback(error);
+    });
+};

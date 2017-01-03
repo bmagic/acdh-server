@@ -104,7 +104,7 @@ module.exports.updateProgram = function (req, res) {
             });
         },
         function (program) {
-            programModel.update(req.param.id, program, function (error) {
+            programModel.update(req.params.id, program, function (error) {
                 if (error) {
                     logger.error(error);
                     res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -115,3 +115,16 @@ module.exports.updateProgram = function (req, res) {
         }
     ]);
 };
+
+module.exports.deleteProgram = function (req, res) {
+    var logger = applicationStorage.logger;
+    programModel.delete(req.params.id, function (error) {
+        if (error) {
+            logger.error(error);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR));
+        } else {
+            res.status(HttpStatus.NO_CONTENT).send(HttpStatus.getStatusText(HttpStatus.NO_CONTENT));
+        }
+    });
+
+}
