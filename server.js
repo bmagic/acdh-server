@@ -29,7 +29,7 @@ async.waterfall([
                 json: false,
                 handleExceptions: true
             })];
-        if (env == "dev") {
+        if (env === "dev") {
             transports.push(new (winston.transports.Console)({handleExceptions: true}));
         }
 

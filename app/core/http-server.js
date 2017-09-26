@@ -67,7 +67,7 @@ module.exports.start = function (port, callback) {
     //Log all other request and send 404
     app.use(function (req, res, next) {
         //noinspection JSUnresolvedVariable
-        if (applicationStorage.env == 'dev') {
+        if (applicationStorage.env === 'dev') {
             logger.info("ip:%s method:%s path:%s params:%s body:%s query:%s", req.headers['x-forwarded-for'] || req.connection.remoteAddress, req.method, req.path, JSON.stringify(req.params), JSON.stringify(req.body), JSON.stringify(req.query));
         } else {
             logger.info("ip:%s method:%s ", req.headers['x-forwarded-for'] || req.connection.remoteAddress, req.method, req.path);
@@ -79,6 +79,8 @@ module.exports.start = function (port, callback) {
     //Initialize api v1 routes
     app.use('/api/v1/users', require("users/routes.js"));
     app.use('/api/v1/programs', require("programs/routes.js"));
+
+
 
     //Log all other request and send 404
     app.use(function (req, res) {
