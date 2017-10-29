@@ -1,8 +1,7 @@
 {
   "name": "acdh-server",
-  "description": "Server part for acdh.audio",
+  "description": "API Server for ACDH.fr",
   "private": true,
-  "main": "server/app.js",
   "dependencies": {
     "ajv": "^4.9.0",
     "app-module-path": "^2.1.0",
@@ -25,6 +24,6 @@
   "scripts": {
     "start": "node server.js"
   },
-  "author": "Baptiste Routhieau <baptiste.routhieau@gmail.com>",
-  "license": "AGPL-3.0"
+  "author": "Baptiste <balomosa@protonmail.com>",
+  "license": "MIT"
 }
