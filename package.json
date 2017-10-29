@@ -2,6 +2,11 @@
   "name": "acdh-server",
   "description": "API Server for ACDH.fr",
   "private": true,
+  "author": "Baptiste <balomosa@protonmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "ajv": "^4.9.0",
     "app-module-path": "^2.1.0",
@@ -20,10 +25,5 @@
     "passport-local": "^1.0.0",
     "randomstring": "^1.1.5",
     "winston": "^2.3.0"
-  },
-  "scripts": {
-    "start": "node server.js"
-  },
-  "author": "Baptiste <balomosa@protonmail.com>",
-  "license": "MIT"
+  }
 }
