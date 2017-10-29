@@ -1,6 +1,4 @@
 node_modules
 npm-debug.log
-app/config/*
-!app/config/config.default.js
 logs
 .idea

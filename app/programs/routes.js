@@ -8,6 +8,7 @@ var auth = require("users/middlewares/auth");
 
 //Define routes
 router.get("/", programController.getPrograms);
+router.get("/:id", programController.getProgram);
 router.put("/", auth.isAdmin, programController.createProgram);
 router.put("/:id", auth.isAdmin, programController.updateProgram);
 router.delete("/:id", auth.isAdmin, programController.deleteProgram);

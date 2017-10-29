@@ -16,14 +16,13 @@ var httpServer = require('core/http-server')
 var app = null
 
 //Load config file
-var env = process.env.NODE_ENV || 'dev'
-applicationStorage.config = require('config/config.' + env + '.js')
+applicationStorage.config = require('config/config.js')
 
 async.waterfall([
   //Initialize the logger
   function (callback) {
     applicationStorage.logger = new (winston.Logger)({
-      level: applicationStorage.config.logger.level,
+      level: applicationStorage.config.log_level,
       transports: [new (winston.transports.Console)({handleExceptions: true})]
     })
 
@@ -32,6 +31,7 @@ async.waterfall([
   },
   //Connect to mongo
   function (callback) {
+  console.log(applicationStorage.config.database)
     mongo.connect(applicationStorage.config.database, function (error, db) {
       applicationStorage.logger.info('Mongo connected')
       applicationStorage.mongo = db

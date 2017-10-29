@@ -1,64 +1,62 @@
-"use strict";
-var Ajv = require('ajv');
-var ajv = new Ajv({removeAdditional: true});
+'use strict'
+var Ajv = require('ajv')
+var ajv = new Ajv({removeAdditional: true})
 
 var schema = {
-    type: "object",
-    additionalProperties: false,
-    properties: {
-        title: {
-            type: "string"
-        },
-        date: {
-            type: "integer"
-        },
-        files: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-                full: {
-                    type: "string"
-                },
-                story: {
-                    type: "string"
-                }
-            },
-            required: ["full"]
-        },
-        guests: {
-            type: "array",
-            items: [
-                {
-                    type: "object",
-                    properties: {
-                        name: {
-                            type: "string"
-                        },
-                        title: {
-                            type: "string"
-                        }
-
-                    },
-                    required: ["name", "title"]
-                }
-            ]
-        },
-        tags: {
-            type: "array",
-            items: [
-                {
-                    type: "string"
-                }
-            ]
-        },
-        description: {
-            type: "string"
-        }
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    title: {
+      type: 'string'
     },
-    required: ["title", "date"]
-};
+    date: {
+      type: 'integer'
+    },
+    url: {
+      type: 'string'
+    },
+    subPrograms: {
+      type: 'array',
+      items: [
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            type: {
+              type: 'string'
+            },
+            url: {
+              type: 'string'
+            }
+          }
+        }
+      ]
+    },
+    guests: {
+      type: 'array',
+      items: [
+        {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            name: {
+              type: 'string'
+            },
+            description: {
+              type: 'string'
+            }
+          },
+          required: ['name', 'description']
+        }
+      ]
+    },
+    description: {
+      type: 'string'
+    }
+  }
+}
 
 module.exports.validate = function (data, callback) {
-    ajv.validate(schema, data);
-    callback(ajv.errors, data);
-};
+  ajv.validate(schema, data)
+  callback(ajv.errors, data)
+}

@@ -5,16 +5,35 @@ var programSchema = require('programs/program-schema')
 var HttpStatus = require('http-status-codes')
 var applicationStorage = require('core/application-storage')
 
+
+module.exports.getProgram = function (req, res) {
+  var logger = applicationStorage.logger
+  programModel.findOne(req.params.id, function (error, program) {
+    if (error) {
+      logger.error(error)
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
+    }
+    else if(program) {
+      res.status(HttpStatus.OK).json(program)
+    }
+    else {
+      res.status(HttpStatus.NOT_FOUND).send(HttpStatus.getStatusText(HttpStatus.NOT_FOUND))
+    }
+  })
+  
+  
+}
+
 module.exports.getPrograms = function (req, res) {
   var logger = applicationStorage.logger
-  var itemNumber = 15
+  var itemNumber = 1000
   var criteria = {}
   if (req.query.search) {
     //criteria = {$or:[{tags:{$regex: req.query.search, $options: "i"}}]}
     //criteria = {$or:[{$text:{$search: req.query.search}},{tags:{$regex: req.query.search, $options: "i"}}]}
     criteria = {$text: {$search: req.query.search}}
   }
-
+  
   var skip = 0
   if (req.query.page) {
     var page = parseInt(req.query.page, 10)
@@ -24,7 +43,7 @@ module.exports.getPrograms = function (req, res) {
       }
     }
   }
-
+  
   async.parallel({
     programs: function (callback) {
       programModel.find(criteria, itemNumber, skip, function (error, programs) {
@@ -82,7 +101,7 @@ module.exports.createProgram = function (req, res) {
           logger.error(error)
           res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
         } else {
-          res.status(HttpStatus.NO_CONTENT).send(HttpStatus.getStatusText(HttpStatus.NO_CONTENT))
+          res.status(HttpStatus.CREATED).json(program)
         }
       })
     }
@@ -108,7 +127,7 @@ module.exports.updateProgram = function (req, res) {
           logger.error(error)
           res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
         } else {
-          res.status(HttpStatus.OK).send(HttpStatus.getStatusText(HttpStatus.OK))
+          res.status(HttpStatus.NO_CONTENT).send(HttpStatus.getStatusText(HttpStatus.NO_CONTENT))
         }
       })
     }
@@ -125,5 +144,5 @@ module.exports.deleteProgram = function (req, res) {
       res.status(HttpStatus.NO_CONTENT).send(HttpStatus.getStatusText(HttpStatus.NO_CONTENT))
     }
   })
-
+  
 }
