@@ -5,23 +5,18 @@ var programSchema = require('programs/program-schema')
 var HttpStatus = require('http-status-codes')
 var applicationStorage = require('core/application-storage')
 
-
 module.exports.getProgram = function (req, res) {
   var logger = applicationStorage.logger
   programModel.findOne(req.params.id, function (error, program) {
     if (error) {
       logger.error(error)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
-    }
-    else if(program) {
+    } else if (program) {
       res.status(HttpStatus.OK).json(program)
-    }
-    else {
+    } else {
       res.status(HttpStatus.NOT_FOUND).send(HttpStatus.getStatusText(HttpStatus.NOT_FOUND))
     }
   })
-  
-  
 }
 
 module.exports.getPrograms = function (req, res) {
@@ -29,21 +24,21 @@ module.exports.getPrograms = function (req, res) {
   var itemNumber = 1000
   var criteria = {}
   if (req.query.search) {
-    //criteria = {$or:[{tags:{$regex: req.query.search, $options: "i"}}]}
-    //criteria = {$or:[{$text:{$search: req.query.search}},{tags:{$regex: req.query.search, $options: "i"}}]}
+    // criteria = {$or:[{tags:{$regex: req.query.search, $options: "i"}}]}
+    // criteria = {$or:[{$text:{$search: req.query.search}},{tags:{$regex: req.query.search, $options: "i"}}]}
     criteria = {$text: {$search: req.query.search}}
   }
-  
+
   var skip = 0
   if (req.query.page) {
     var page = parseInt(req.query.page, 10)
-    if (page != NaN) {
+    if (!isNaN(page)) {
       if (page > 0) {
         skip = page * itemNumber
       }
     }
   }
-  
+
   async.parallel({
     programs: function (callback) {
       programModel.find(criteria, itemNumber, skip, function (error, programs) {
@@ -144,5 +139,4 @@ module.exports.deleteProgram = function (req, res) {
       res.status(HttpStatus.NO_CONTENT).send(HttpStatus.getStatusText(HttpStatus.NO_CONTENT))
     }
   })
-  
 }

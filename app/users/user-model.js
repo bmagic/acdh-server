@@ -1,6 +1,6 @@
 'use strict'
 
-//Defines dependencies
+// Defines dependencies
 var applicationStorage = require('core/application-storage')
 var getHashAndSalt = require('core/utilities/password').getHashAndSalt
 

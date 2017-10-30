@@ -1,6 +1,6 @@
-"use strict";
+'use strict'
 
-var HttpStatus = require('http-status-codes');
+var HttpStatus = require('http-status-codes')
 
 /**
  * Check if user is authenticated
@@ -10,11 +10,11 @@ var HttpStatus = require('http-status-codes');
  * @returns {*}
  */
 module.exports.isAuthenticated = function (req, res, next) {
-    if (req.user) {
-        return next();
-    }
-    res.status(HttpStatus.FORBIDDEN).send(HttpStatus.getStatusText(HttpStatus.FORBIDDEN));
-};
+  if (req.user) {
+    return next()
+  }
+  res.status(HttpStatus.FORBIDDEN).send(HttpStatus.getStatusText(HttpStatus.FORBIDDEN))
+}
 
 /**
  * Check if user is admin
@@ -24,8 +24,8 @@ module.exports.isAuthenticated = function (req, res, next) {
  * @returns {*}
  */
 module.exports.isAdmin = function (req, res, next) {
-    if (req.user && req.user.admin === true) {
-        return next();
-    }
-    res.status(HttpStatus.FORBIDDEN).send(HttpStatus.getStatusText(HttpStatus.FORBIDDEN));
-};
+  if (req.user && req.user.admin === true) {
+    return next()
+  }
+  res.status(HttpStatus.FORBIDDEN).send(HttpStatus.getStatusText(HttpStatus.FORBIDDEN))
+}
