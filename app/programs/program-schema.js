@@ -52,6 +52,14 @@ var schema = {
     },
     description: {
       type: 'string'
+    },
+    replays: {
+      type: 'array',
+      items: [
+        {
+          type: 'integer'
+        }
+      ]
     }
   }
 }
