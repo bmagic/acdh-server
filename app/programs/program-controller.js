@@ -21,11 +21,10 @@ module.exports.getProgram = function (req, res) {
 
 module.exports.getPrograms = function (req, res) {
   var logger = applicationStorage.logger
-  var itemNumber = 1000
+  var itemNumber = 20
   var criteria = {}
+  var projection = {title: 1, date: 1, url: 1}
   if (req.query.search) {
-    // criteria = {$or:[{tags:{$regex: req.query.search, $options: "i"}}]}
-    // criteria = {$or:[{$text:{$search: req.query.search}},{tags:{$regex: req.query.search, $options: "i"}}]}
     criteria = {$text: {$search: req.query.search}}
   }
 
@@ -41,7 +40,7 @@ module.exports.getPrograms = function (req, res) {
 
   async.parallel({
     programs: function (callback) {
-      programModel.find(criteria, itemNumber, skip, function (error, programs) {
+      programModel.find(criteria, projection, itemNumber, skip, function (error, programs) {
         callback(error, programs)
       })
     },
@@ -55,8 +54,7 @@ module.exports.getPrograms = function (req, res) {
       logger.error(error)
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
     } else {
-      res.header('X-count', results.count)
-      res.status(HttpStatus.OK).json(results.programs)
+      res.status(HttpStatus.OK).json(results)
     }
   })
 }
