@@ -38,9 +38,9 @@ module.exports.update = function (id, program, callback) {
  * @param skip
  * @param callback
  */
-module.exports.find = function (criteria, limit, skip, callback) {
+module.exports.find = function (criteria, projection, limit, skip, callback) {
   var collection = applicationStorage.mongo.collection(databaseName)
-  collection.find(criteria, {score: {$meta: 'textScore'}}).sort({date: -1}).limit(limit).skip(skip).toArray(function (error, programs) {
+  collection.find(criteria, projection).sort({date: -1}).limit(limit).skip(skip).toArray(function (error, programs) {
     callback(error, programs)
   })
 }
