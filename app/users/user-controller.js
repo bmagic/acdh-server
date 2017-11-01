@@ -35,7 +35,7 @@ module.exports.register = function (req, res) {
         var emailData = {
           'FromEmail': 'noreply@acdh.fr',
           'FromName': 'ACDH.fr',
-          'Subject': 'Vérification de votre compte sur acdh.fr',
+          'Subject': 'Bienvenue sur ACDH.fr',
           'HTML-part': fs.readFileSync('app/core/mails/welcome.html', 'utf8'),
           'Recipients': [{'Email': req.body.email}]
         }
