@@ -14,5 +14,6 @@ router.post('/register', userController.register)
 router.post('/login', passport.authenticate('local'), userController.login)
 router.get('/profile', userController.profile)
 router.get('/logout', userController.logout)
+router.delete('/', userController.delete)
 
 module.exports = router

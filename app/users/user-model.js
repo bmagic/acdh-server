@@ -43,3 +43,15 @@ module.exports.updateLastLogin = function (email, callback) {
     callback(error)
   })
 }
+
+/**
+ * Delete user
+ * @param email
+ * @param callback
+ */
+module.exports.delete = function (email, callback) {
+  var collection = applicationStorage.mongo.collection(databaseName)
+  collection.deleteOne({email: email}, function (error) {
+    callback(error)
+  })
+}

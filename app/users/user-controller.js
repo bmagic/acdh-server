@@ -107,3 +107,21 @@ module.exports.logout = function (req, res) {
   req.logout()
   res.status(HttpStatus.NO_CONTENT).send()
 }
+
+/**
+ * Logout route
+ * @param req
+ * @param res
+ */
+module.exports.delete = function (req, res) {
+  var logger = applicationStorage.logger
+  userModel.delete(req.user.email, function (error) {
+    if (error) {
+      logger.error(error)
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
+    } else {
+      req.logout()
+      res.status(HttpStatus.NO_CONTENT).send()
+    }
+  })
+}
