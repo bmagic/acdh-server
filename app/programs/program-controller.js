@@ -21,7 +21,7 @@ module.exports.getProgram = function (req, res) {
 
 module.exports.getPrograms = function (req, res) {
   var logger = applicationStorage.logger
-  var itemNumber = 20
+  var itemNumber = 10
   var criteria = {}
   var projection = {title: 1, date: 1, url: 1}
   if (req.query.search) {
