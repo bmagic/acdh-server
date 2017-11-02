@@ -18,11 +18,12 @@ passport.use(new LocalStrategy(
         return done(null, false)
       }
 
-      if (!validateHash(user.password, user.salt, password) && user.active === true) {
+      if (!validateHash(user.password, user.salt, password) || user.active !== true) {
         return done(null, false)
       }
       delete user.password
       delete user.salt
+      delete user.active
       return done(null, user)
     })
   }
@@ -42,6 +43,7 @@ passport.deserializeUser(function (email, done) {
     if (user) {
       delete user.password
       delete user.salt
+      delete user.active
       done(null, user)
     } else {
       done(null, false)
