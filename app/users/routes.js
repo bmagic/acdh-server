@@ -14,7 +14,7 @@ router.post('/register', userController.register)
 router.post('/validate', userController.validate)
 router.post('/login', passport.authenticate('local'), userController.login)
 router.get('/profile', userController.profile)
-router.get('/logout', userController.logout)
+router.get('/logout', auth.isAuthenticated, userController.logout)
 router.delete('/', auth.isAuthenticated, userController.delete)
 
 module.exports = router
