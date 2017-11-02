@@ -10,7 +10,7 @@ var HttpStatus = require('http-status-codes')
  * @returns {*}
  */
 module.exports.isAuthenticated = function (req, res, next) {
-  if (req.user) {
+  if (req.user && req.user.active === true) {
     return next()
   }
   res.status(HttpStatus.FORBIDDEN).send(HttpStatus.getStatusText(HttpStatus.FORBIDDEN))

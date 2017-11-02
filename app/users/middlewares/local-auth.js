@@ -18,7 +18,7 @@ passport.use(new LocalStrategy(
         return done(null, false)
       }
 
-      if (!validateHash(user.password, user.salt, password)) {
+      if (!validateHash(user.password, user.salt, password) && user.active === true) {
         return done(null, false)
       }
       delete user.password

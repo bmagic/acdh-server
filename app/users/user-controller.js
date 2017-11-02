@@ -36,7 +36,7 @@ module.exports.register = function (req, res) {
           'FromEmail': 'noreply@acdh.fr',
           'FromName': 'ACDH.fr',
           'Subject': 'Bienvenue sur ACDH.fr',
-          'HTML-part': fs.readFileSync('app/core/mails/welcome.html', 'utf8'),
+          'HTML-part': fs.readFileSync('app/core/mails/validation.html', 'utf8').replace(/TOKEN/g, token),
           'Recipients': [{'Email': req.body.email}]
         }
 
@@ -52,7 +52,68 @@ module.exports.register = function (req, res) {
         logger.error(error)
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
       } else {
-        req.login({email: req.body.email}, function (error) {
+        // req.login({email: req.body.email}, function (error) {
+        //   if (error) {
+        //     logger.error(error)
+        //     res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
+        //   } else {
+        //     res.status(HttpStatus.CREATED).json(req.user)
+        //   }
+        // })
+        res.status(HttpStatus.NO_CONTENT).send()
+      }
+    }
+    )
+  } else {
+    res.status(HttpStatus.BAD_REQUEST).send(HttpStatus.getStatusText(HttpStatus.BAD_REQUEST))
+  }
+}
+
+module.exports.validate = function (req, res) {
+  var logger = applicationStorage.logger
+  if (req.body.token && req.body.token.length === 20) {
+    async.waterfall([
+      function (callback) {
+        userModel.findOneByToken(req.body.token, function (error, user) {
+          if (error) {
+            callback(error)
+          } else {
+            if (user) {
+              callback(null, user.email)
+            } else {
+              // eslint-disable-next-line
+              callback(true)
+            }
+          }
+        })
+      },
+      function (email, callback) {
+        userModel.setActive(email, function (error) {
+          callback(error, email)
+        })
+      },
+      function (email, callback) {
+        var emailData = {
+          'FromEmail': 'noreply@acdh.fr',
+          'FromName': 'ACDH.fr',
+          'Subject': 'Bienvenue sur ACDH.fr',
+          'HTML-part': fs.readFileSync('app/core/mails/welcome.html', 'utf8'),
+          'Recipients': [{'Email': email}]
+        }
+
+        var sendEmail = Mailjet.post('send')
+        sendEmail.request(emailData, function (error) {
+          callback(error, email)
+        })
+      }
+    ], function (error, email) {
+      if (error && error === true) {
+        res.status(HttpStatus.BAD_REQUEST).send(HttpStatus.getStatusText(HttpStatus.BAD_REQUEST))
+      } else if (error) {
+        logger.error(error)
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
+      } else {
+        req.login({email: email}, function (error) {
           if (error) {
             logger.error(error)
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
