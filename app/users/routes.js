@@ -16,5 +16,7 @@ router.post('/login', passport.authenticate('local'), userController.login)
 router.get('/profile', userController.profile)
 router.get('/logout', auth.isAuthenticated, userController.logout)
 router.delete('/', auth.isAuthenticated, userController.delete)
+router.post('/views/:id', auth.isAuthenticated, userController.addView)
+router.delete('/views/:id', auth.isAuthenticated, userController.deleteView)
 
 module.exports = router

@@ -58,6 +58,18 @@ module.exports.findOne = function (id, callback) {
 }
 
 /**
+ * Find a program
+ * @param id
+ * @param callback
+ */
+module.exports.exist = function (id, callback) {
+  var collection = applicationStorage.mongo.collection(databaseName)
+  collection.findOne({_id: ObjectID(id)}, {_id: 1}, function (error, program) {
+    callback(error, program !== undefined)
+  })
+}
+
+/**
  * Count programs
  * @param criteria
  * @param callback

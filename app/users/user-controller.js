@@ -2,6 +2,7 @@
 var async = require('async')
 var HttpStatus = require('http-status-codes')
 var userModel = require('users/user-model')
+var programModel = require('programs/program-model')
 var applicationStorage = require('core/application-storage')
 var validateEmail = require('core/utilities/email').validateEmail
 var Mailjet = require('node-mailjet').connect(applicationStorage.config.mailjet.key, applicationStorage.config.mailjet.secret)
@@ -183,6 +184,75 @@ module.exports.delete = function (req, res) {
     } else {
       req.logout()
       res.status(HttpStatus.NO_CONTENT).send()
+    }
+  })
+}
+
+/**
+ * Add View
+ * @param req
+ * @param res
+ */
+module.exports.addView = function (req, res) {
+  var logger = applicationStorage.logger
+
+  async.waterfall([
+    function (callback) {
+      programModel.exist(req.params.id, function (error, exist) {
+        if (!exist) {
+          // eslint-disable-next-line
+          callback(true)
+        } else {
+          callback(error)
+        }
+      })
+    },
+    function (callback) {
+      userModel.addView(req.user.email, req.params.id, function (error) {
+        callback(error)
+      })
+    },
+    function (callback) {
+      userModel.getViewList(req.user.email, function (error, viewList) {
+        callback(error, viewList)
+      })
+    }], function (error, result) {
+    if (error && error === true) {
+      res.status(HttpStatus.BAD_REQUEST).send(HttpStatus.getStatusText(HttpStatus.BAD_REQUEST))
+    } else if (error) {
+      logger.error(error)
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
+    } else {
+      res.status(HttpStatus.OK).json(result.viewList)
+    }
+  })
+}
+
+/**
+ * Add View
+ * @param req
+ * @param res
+ */
+module.exports.deleteView = function (req, res) {
+  var logger = applicationStorage.logger
+
+  async.waterfall([
+
+    function (callback) {
+      userModel.deleteView(req.user.email, req.params.id, function (error) {
+        callback(error)
+      })
+    },
+    function (callback) {
+      userModel.getViewList(req.user.email, function (error, viewList) {
+        callback(error, viewList)
+      })
+    }], function (error, result) {
+    if (error) {
+      logger.error(error)
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR))
+    } else {
+      res.status(HttpStatus.OK).json(result.viewList)
     }
   })
 }
