@@ -28,6 +28,7 @@ module.exports.getPrograms = function (req, res) {
   if (req.query.search) {
     criteria = {$text: {$search: req.query.search}}
     sort = {score: {$meta: 'textScore'}}
+    projection.score = {$meta: 'textScore'}
   }
 
   var skip = 0
