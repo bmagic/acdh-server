@@ -24,8 +24,10 @@ module.exports.getPrograms = function (req, res) {
   var itemNumber = 10
   var criteria = {}
   var projection = {title: 1, date: 1, url: 1}
+  var sort = {date: -1}
   if (req.query.search) {
     criteria = {$text: {$search: req.query.search}}
+    sort = {score: {$meta: 'textScore'}}
   }
 
   var skip = 0
@@ -40,7 +42,7 @@ module.exports.getPrograms = function (req, res) {
 
   async.parallel({
     programs: function (callback) {
-      programModel.find(criteria, projection, itemNumber, skip, function (error, programs) {
+      programModel.find(criteria, projection, sort, itemNumber, skip, function (error, programs) {
         callback(error, programs)
       })
     },
